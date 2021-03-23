@@ -2,7 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <UserSecretsId>b0fe3c67-9ece-40a5-a289-f10b797cb0b7</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.1.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.0" />
+    <PackageReference Include="FluentValidation" Version="9.5.3" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
