@@ -8,6 +8,7 @@ namespace Business.ValidationRules.FluentValidation
 {
     public class ProductValidator:AbstractValidator<Product>
     {
+        // Kurallar constructor içine yazılır..
         public ProductValidator()
         {
             //Doğrulama kurallarını buraya yazıyoruz..
