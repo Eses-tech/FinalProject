@@ -3,6 +3,9 @@ using Business.BusinessAspects.Autofac;
 using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Cache;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
@@ -17,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace Business.Concrete
 {
@@ -35,6 +39,7 @@ namespace Business.Concrete
         //claim
         [SecuredOperation("product.add")]
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Add(Product product)
         {
             // Business kodları ile validation(doğrulama) kodlarını birbiri yerine kullanmayacaksın!!
@@ -56,7 +61,8 @@ namespace Business.Concrete
             
             
         }
-
+        [PerformanceAspect(5)]
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             // iş kodları
@@ -74,7 +80,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));
         }
-
+        [CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));
@@ -125,8 +131,19 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+        [CacheRemoveAspect("IProductService.Get")]
+        public IResult Update(Product product)
+        {
+            _productDal.Update(product);
+            return new SuccessResult();
+        }
 
-
-
+        [TransactionScopeAspect]
+        public IResult AddTransactionalTest(Product product)
+        {
+            _productDal.Update(product);
+            _productDal.Add(product);
+            return new SuccessResult();
+        }
     }
 }
